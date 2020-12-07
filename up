@@ -1,0 +1,8 @@
+docker stop c4agent_frpc_1
+sudo umount /home/mirror
+docker build -t c4agent . \
+&& sudo mkdir -p /home/mirror \
+&& sudo bindfs --map=1000/1979 $HOME /home/mirror \
+&& sudo mkdir -p /home/mirror/c4repo \
+&& sudo chown 1979:1979 /home/mirror/c4repo \
+&& docker-compose -p c4agent up -d

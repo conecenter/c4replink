@@ -1,0 +1,10 @@
+services:
+  frpc:
+    command: ["perl","/frpc.pl"]
+    image: c4agent
+    volumes:
+    - /home/mirror/c4agent.ssh:/c4/.ssh
+    - /home/mirror/c4repo:/c4repo
+    ports:
+    - "127.0.21.1:5005:5005"
+version: '2'
