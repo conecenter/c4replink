@@ -47,10 +47,18 @@ my $iter; $iter = sub{
     &$iter($parent_dir,\@names,\@will_done);
 };
 
+my $relink = sub{
+    my($f,$l)=@_;
+    if($f ne readlink $l){ unlink $l; symlink $f, $l or die $!, $f, $l }
+};
+
 do{
-    my $parent_dir = $ENV{C4REPO_PARENT_DIR} || die "no C4REPO_PARENT_DIR";
+    my($parent_dir,$extra_dir) = $ENV{C4REPO_PARENT_DIR}=~/^(.+):(.*)$/ ? ($1,$2) : die "no C4REPO_PARENT_DIR";
     my($name,$ato)=@ARGV;
     $name || die "no name arg";
     $ato and &$sync_commit($parent_dir,$name,$ato);
     &$iter($parent_dir,[$name],[]);
+    if($extra_dir){
+        &$relink($_,$extra_dir.substr $_,length $parent_dir) for <$parent_dir/*>
+    }
 };
