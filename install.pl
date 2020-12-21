@@ -23,7 +23,8 @@ if($cmd eq 'apt'){
     -e $_ or mkdir $_ or die for "/tools";
     /^([a-z]+).*/ and rename $_,"/tools/$1" or die $_ for <*>;
 } elsif($cmd eq 'useradd'){
-    sy('useradd --home-dir /c4 --create-home --user-group --uid 1979 --shell /bin/bash c4');
+    my $uid = $args[0] || die;
+    sy("useradd --home-dir /c4 --create-home --user-group --uid $uid --shell /bin/bash c4");
 } else {
     die;
 }
