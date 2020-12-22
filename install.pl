@@ -1,4 +1,4 @@
-
+#!/usr/bin/perl
 ### here is minimal utils to write dockerfile lines a bit more compact
 ### it should not be changed too often to avoid total rebuild
 
