@@ -53,7 +53,8 @@ my $relink = sub{
 };
 
 do{
-    my($parent_dir,$extra_dir) = $ENV{C4REPO_PARENT_DIR}=~/^(.+):(.*)$/ ? ($1,$2) : die "no C4REPO_PARENT_DIR";
+    my $parent_dir = $ENV{C4REPO_PARENT_DIR} || die "no C4REPO_PARENT_DIR";
+    my $extra_dir = $ENV{C4REPO_ALIAS_DIR};
     my($name,$ato)=@ARGV;
     $name || die "no name arg";
     $ato and &$sync_commit($parent_dir,$name,$ato);

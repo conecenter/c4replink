@@ -7,7 +7,8 @@ services:
     - ${HOME}/c4agent.ssh:/c4/.ssh
     - ${HOME}/c4repo:/c4repo
     environment:
-    - C4REPO_PARENT_DIR=/c4repo:/c4
+    - C4REPO_PARENT_DIR=/c4repo
+    - C4REPO_ALIAS_DIR=/c4
     ports:
     - "127.0.21.1:5005:5005"
 version: '2'
