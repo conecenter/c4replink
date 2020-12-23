@@ -1,0 +1,6 @@
+mkdir -p .tmp-ssh \
+&& cp ~/.ssh/known_hosts .tmp-ssh \
+&& cp ~/.ssh/id_rsa .tmp-ssh \
+&& docker build -f ci.dockerfile -t builder:replink-with-keys-v1 .
+rm -r .tmp-ssh
+
