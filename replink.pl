@@ -1,14 +1,11 @@
 #!/usr/bin/perl
 use strict;
-use JSON::XS;
 
-sub so{ print join(" ",@_),"\n"; system @_; }
 sub sy{ print join(" ",@_),"\n"; system @_ and die $?; }
+my $get_parent = sub{ my($p)=@_; $p=~m{(.*)/[^/]+$} ? "$1" : die };
 
 my $sync_commit = sub{
-    my ($parent_dir,$name,$ato) = @_;
-    my $dir = "$parent_dir/$name";
-    my ($full_repo,$to) = $ato=~/^(.*):([^:]+)$/ ? ($1,$2) : die;
+    my ($dir,$full_repo,$to) = @_;
     $full_repo and !-e $dir and sy("git clone $full_repo $dir");
     #
     my $no_sync = "$dir/c4gen-git-no-sync";
@@ -31,35 +28,15 @@ my $sync_commit = sub{
     }
 };
 
-my $chk_distinct = sub{ my %was; $was{$_}++ and die "non-single ($_)" for @_; };
-my ($op,$from,$to) = map{my $i=$_;sub{$_[0][$i]||die}} 0..2;
-
 my $iter; $iter = sub{
-    my ($parent_dir,$left,$done) = @_;
-    my @rels = grep{ref && &$op($_) eq "C4REL"} 
-        map{@{JSON::XS->new->decode(scalar `cat $_`)}} 
-        grep{-e} map{"$parent_dir/$_/c4dep.main.json"} @$left;
-    @rels || return;
-    my @names = map{&$from($_)} @rels;
-    my @will_done = (@$left,@$done);
-    &$chk_distinct(@names,@will_done);
-    &$sync_commit($parent_dir,&$from($_),&$to($_)) for @rels;
-    &$iter($parent_dir,\@names,\@will_done);
-};
-
-my $relink = sub{
-    my($f,$l)=@_;
-    if($f ne readlink $l){ unlink $l; symlink $f, $l or die $!, $f, $l }
-};
-
-do{
-    my $parent_dir = $ENV{C4REPO_PARENT_DIR} || die "no C4REPO_PARENT_DIR";
-    my $extra_dir = $ENV{C4REPO_ALIAS_DIR};
-    my($name,$ato)=@ARGV;
-    $name || die "no name arg";
-    $ato and &$sync_commit($parent_dir,$name,$ato);
-    &$iter($parent_dir,[$name],[]);
-    if($extra_dir){
-        &$relink($_,$extra_dir.substr $_,length $parent_dir) for <$parent_dir/*>
+    my ($p_conf_path) = @_;
+    for(map{`cat $_`} grep{-e} $p_conf_path){
+        my ($c_rel_conf_path,$repo,$to) = /^C4REL\s+(\S+)\s+(\S+)\s+(\S+)\s*$/ ? 
+            ($1,$2,$3) : !/\S/ || /^#/ ? next : die $_; 
+        my $c_conf_path =  &$get_parent($p_conf_path)."/$c_rel_conf_path";
+        &$sync_commit(&$get_parent($c_conf_path),$repo,$to);
+        &$iter($c_conf_path);
     }
 };
+
+&$iter($ENV{C4REPO_MAIN_CONF} || die "no C4REPO_MAIN_CONF");
