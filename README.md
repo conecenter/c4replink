@@ -3,12 +3,16 @@ This script works similar to git modules.
 It can recursively checkout dependent repositories.
 
 If `foo` repo needs `bar` repo at commit `123456`, `some.replink` config in `foo` repo contains line:
-`C4REL bar/other.replink https://github.com/group/bar.git 123456`
+```
+C4REL bar/other.replink https://github.com/group/bar.git 123456
+```
 
 `bar` directory can be checkout into `foo` directory or near it using `../bar/other.replink`.
 
 With linux and git installed it could be run just like this:
-`C4REPO_MAIN_CONF=/some_path/some_repo/example.replink ./replink.pl`
+```
+C4REPO_MAIN_CONF=/some_path/some_repo/example.replink ./replink.pl
+```
 
 Or it can be used in docker:
 ```
