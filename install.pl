@@ -4,15 +4,14 @@
 
 use strict;
 
-sub so{ print join(" ",@_),"\n"; system @_ }
-sub sy{ &so and die $? }
+sub sy{ print join(" ",@_),"\n"; system @_ and die $?; }
 
 my($cmd,@args)=@ARGV;
 
 if($cmd eq 'apt'){
     $ENV{DEBIAN_FRONTEND} = 'noninteractive';
     sy('apt', 'update');
-    sy('apt-get', 'install', '-y', "--no-install-recommends", @args);
+    sy('apt-get', 'install', '-y', "--no-install-recommends", grep{!/^#/} @args);
     sy("rm -rf /var/lib/apt/lists/*");
 } elsif($cmd eq 'curl'){
     for('/download'){ mkdir $_; chdir $_ or die $_ }
