@@ -1,1 +1,0 @@
-docker build -t c4replink:v2 --build-arg C4UID=$(id -u) .
