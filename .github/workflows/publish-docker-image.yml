@@ -21,10 +21,10 @@ jobs:
 #          password: ${{ secrets.GITHUB_TOKEN }}
 #          username: ${{ github.repository_owner }} #login denied
 #          password: ${{ secrets.GHCR_TOKEN }}
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
-#          password: ${{ secrets.GITHUB_REGISTRY_TOKEN }}
+#          username: ${{ github.repository_owner }} #login: Username and password required
 #          password: ${{ secrets.CR_PAT }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_REGISTRY_TOKEN }}
       - name: Push to GitHub Packages v2
         uses: docker/build-push-action@v3
         with:
