@@ -24,7 +24,7 @@ jobs:
         with:
           file: ./v3k.dockerfile
           push: true
-          tags: ghcr.io/conecenter/c4replink:v3k
+          tags: ghcr.io/conecenter/c4replink:v3k,ghcr.io/conecenter/c4replink:v3kc
 
 #          tags: ghcr.io/${{ github.repository }}:v3
 
